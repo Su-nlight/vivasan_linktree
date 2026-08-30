@@ -42,9 +42,46 @@
   }
 }
 
+/* 1. Default Arrow (Normal select) */
 html, body {
   min-height: 100%;
+  cursor: url('/icons/cursor/normal.apng'), url('/icons/cursor/alt.apng'), auto;
 }
+
+div {
+  cursor: url('/icons/cursor/normal.apng'), url('/icons/cursor/alt.apng'), auto;
+}
+
+/* 2. Pointer / Hand (Links, buttons, interactive elements) */
+a, span, button, [role="button"], input[type="submit"] {
+  cursor: url('/icons/cursor/link.apng'), pointer;
+}
+
+/* 3. Text I-Beam (Text fields, text areas, paragraphs) */
+p,  h1, h2, h3, input[type="text"], textarea {
+  cursor: url('/icons/cursor/text.apng'), text;
+}
+
+/* 4. Not Allowed / Disabled */
+[disabled], .disabled, .not-allowed {
+  cursor: url('/icons/cursor/unavailable.apng'), not-allowed;
+}
+
+/* 5. Help Indicator */
+.help-trigger, help {
+  cursor: url('/icons/cursor/help.apng'), help;
+}
+
+/* 6. Progress / Loading (Hovering over loading sections) */
+.loading-state {
+  cursor: url('/icons/cursor/busy.apng'), progress;
+}
+
+/* 7. Move / Dragging */
+.draggable {
+  cursor: url('/icons/cursor/move.apng'), move;
+}
+
 
 body {
   margin: 0;
@@ -161,17 +198,50 @@ body {
 }
 
 .avatar-ring {
+  position: relative;
   width: 108px;
   height: 108px;
   border-radius: 50%;
   padding: 3px;
-  background: conic-gradient(from 140deg, var(--aurora-1), var(--aurora-2), var(--aurora-3), var(--aurora-4), var(--aurora-1));
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   margin-bottom: 20px;
-  animation: spin-ring 12s linear infinite;
+  z-index: 1;
 }
 
-@keyframes spin-ring {
-  to { transform: rotate(360deg); }
+/* soft glowing aurora halo breathing behind the photo — no spin, just gentle pulse + color drift */
+.avatar-ring::before {
+  content: "";
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--aurora-1), var(--aurora-2), var(--aurora-3), var(--aurora-4), var(--aurora-1));
+  filter: blur(20px);
+  opacity: 0.5;
+  z-index: -1;
+  animation: halo-breathe 7s ease-in-out infinite, halo-hue 22s linear infinite;
+}
+
+@keyframes halo-breathe {
+  0%, 100% { transform: scale(0.9);  opacity: 0.4; }
+  50%      { transform: scale(1.1);  opacity: 0.7; }
+}
+
+@keyframes halo-hue {
+  0%   { filter: blur(20px) hue-rotate(0deg); }
+  100% { filter: blur(20px) hue-rotate(360deg); }
+}
+
+/* static crescent of light across the ring, like a glass reflection */
+.avatar-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, transparent 38%);
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 .avatar {
@@ -250,6 +320,8 @@ body {
 }
 
 .social-pill svg { width: 18px; height: 18px; fill: currentColor; }
+.social-pill img { width: 18px; height: 18px; object-fit: contain; }
+.link-icon img { width: 20px; height: 20px; object-fit: contain; }
 
 /* ============================================================
    LINK CARDS — glass + cursor-tracked light refraction (signature)
@@ -362,6 +434,77 @@ body {
 .link-card:hover .link-arrow {
   transform: translateX(3px);
 }
+
+/* ============================================================
+   3D FLOATING GEM — fun ambient element between socials & links
+   ============================================================ */
+.gem-stage {
+  position: relative;
+  z-index: 2;
+  height: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+  margin: 4px 0 34px;
+}
+
+.gem-stage::after {
+  content: "";
+  position: absolute;
+  bottom: 18px;
+  width: 70px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.45), transparent 70%);
+  filter: blur(4px);
+  animation: gem-shadow 5s ease-in-out infinite;
+}
+
+.gem-tilt {
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease;
+}
+
+.gem {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  transform-style: preserve-3d;
+  animation: gem-motion 9s ease-in-out infinite;
+}
+
+@keyframes gem-motion {
+  0%   { transform: translateY(0)     rotateY(0deg)   rotateX(-14deg); }
+  25%  { transform: translateY(-14px) rotateY(90deg)  rotateX(-14deg); }
+  50%  { transform: translateY(0)     rotateY(180deg) rotateX(-14deg); }
+  75%  { transform: translateY(-14px) rotateY(270deg) rotateX(-14deg); }
+  100% { transform: translateY(0)     rotateY(360deg) rotateX(-14deg); }
+}
+
+.gem {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  width: 84px;
+  height: 84px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  box-shadow: inset 0 0 24px rgba(255, 255, 255, 0.12), 0 0 18px rgba(0, 0, 0, 0.25);
+}
+
+.face--front  { transform: translateZ(42px); background: linear-gradient(135deg, rgba(255, 46, 154, 0.55), rgba(255, 46, 154, 0.1)); }
+.face--back   { transform: rotateY(180deg) translateZ(42px); background: linear-gradient(135deg, rgba(124, 92, 255, 0.55), rgba(124, 92, 255, 0.1)); }
+.face--right  { transform: rotateY(90deg) translateZ(42px); background: linear-gradient(135deg, rgba(47, 230, 214, 0.55), rgba(47, 230, 214, 0.1)); }
+.face--left   { transform: rotateY(-90deg) translateZ(42px); background: linear-gradient(135deg, rgba(255, 184, 77, 0.55), rgba(255, 184, 77, 0.1)); }
+.face--top    { transform: rotateX(90deg) translateZ(42px); background: linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.15)); }
+.face--bottom { transform: rotateX(-90deg) translateZ(42px); background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.15)); }
+
 
 /* ============================================================
    FOOTER
