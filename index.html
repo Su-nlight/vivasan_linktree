@@ -24,17 +24,54 @@
   </div>
   <div class="grain" aria-hidden="true"></div>
 
+  <svg style="position:absolute; width:0; height:0" aria-hidden="true">
+    <defs>
+      <filter id="goo">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+        <feColorMatrix in="blur" mode="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="goo-cursor-layer" id="gooLayer" aria-hidden="true">
+    <span class="goo-blob" id="blobMain"></span>
+    <span class="goo-blob goo-blob--trail1" id="blobTrail1"></span>
+    <span class="goo-blob goo-blob--trail2" id="blobTrail2"></span>
+  </div>
+
   <main class="page">
 
-    <header class="profile" id="profile">
-      <!-- Avatar + name + tagline are injected by script.js from the PROFILE object -->
-    </header>
+    <div class="hero-row">
+      <div class="hero-left">
+        <header class="profile" id="profile">
+          <!-- Avatar + name + tagline are injected by script.js from the PROFILE object -->
+        </header>
 
-    <nav class="socials" id="socials" aria-label="Social links">
-      <!-- Social icon pills injected by script.js from the SOCIALS array -->
-    </nav>
+        <nav class="socials" id="socials" aria-label="Social links">
+          <!-- Social icon pills injected by script.js from the SOCIALS array -->
+        </nav>
+      </div>
 
-    <section class="gem-stage" id="gemStage" aria-hidden="true">
+      <div class="hero-right">
+        <section class="card-stage" id="cardStage">
+          <div class="card-tilt" id="cardTilt">
+            <div class="flip-card" id="flipCard">
+              <div class="card-face card-face--front"><img id="cardFrontImg" src="" alt="" draggable="false" /></div>
+              <div class="card-face card-face--back"><img id="cardBackImg" src="" alt="" draggable="false" /></div>
+              <div class="card-edge card-edge--top"></div>
+              <div class="card-edge card-edge--bottom"></div>
+              <div class="card-edge card-edge--left"></div>
+              <div class="card-edge card-edge--right"></div>
+            </div>
+          </div>
+          <p class="drag-hint">Drag to spin · double-click to reset</p>
+        </section>
+      </div>
+    </div>
+
+    <!-- <section class="gem-stage" id="gemStage" aria-hidden="true">
       <div class="gem-tilt" id="gemTilt">
         <div class="gem">
           <span class="face face--front"></span>
@@ -45,7 +82,7 @@
           <span class="face face--bottom"></span>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <section class="links" id="links" aria-label="Links">
       <!-- Link cards injected by script.js from the LINKS array -->
