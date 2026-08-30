@@ -274,6 +274,10 @@ function initCustomCursor() {
     return "normal";
   }
 
+  function shouldEnableEnhancedCursor() {
+    return window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 821px)").matches;
+  }
+
   function setCursor(key) {
     if (key === currentKey) return;
     currentKey = key;
@@ -335,6 +339,12 @@ document.addEventListener("DOMContentLoaded", () => {
   renderLinks();
   attachGemParallax();
   attachCardDrag();
-  initCustomCursor();
-  initGooCursor();
+
+  if (shouldEnableEnhancedCursor()) {
+    document.body.classList.add("custom-cursor-enabled");
+    initCustomCursor();
+    initGooCursor();
+  } else {
+    document.body.classList.remove("custom-cursor-enabled");
+  }
 });

@@ -32,8 +32,20 @@
           values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
         <feComposite in="SourceGraphic" in2="goo" operator="atop" />
       </filter>
+      <filter id="gooBackdrop">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur" />
+        <feColorMatrix in="blur" mode="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9" result="gooBackdropMerge" />
+        <feComposite in="SourceGraphic" in2="gooBackdropMerge" operator="atop" />
+      </filter>
     </defs>
   </svg>
+
+  <div class="goo-bg-layer" aria-hidden="true">
+    <span class="goo-bg-blob goo-bg-blob--a"></span>
+    <span class="goo-bg-blob goo-bg-blob--b"></span>
+    <span class="goo-bg-blob goo-bg-blob--c"></span>
+  </div>
 
   <div class="goo-cursor-layer" id="gooLayer" aria-hidden="true">
     <span class="goo-blob" id="blobMain"></span>
