@@ -6,12 +6,12 @@
 
 // ---- Your profile ------------------------------------------------
 const PROFILE = {
-  name: "Vivacious San",
-  tagline: "Architecture Student · Design Enthusiast",
+  name: "Sanjana Kumari",
+  tagline: "Architecture Student · Design Enthusiast · Creative Thinker",
   // Leave avatarUrl empty to show initials instead of a photo.
   // To use your own photo, put the file next to this one and set
   // avatarUrl: "me.jpg"
-  avatarUrl: "./image/avatar.png",
+  avatarUrl: "/image/avatar.jpeg",
   initials: "VS",
 };
 
@@ -29,27 +29,27 @@ const SOCIALS = [
 const LINKS = [
   {
     label: "Portfolio",
-    sub: "Selected work, 2023–2026",
+    sub: "Selected work, 2023 - 2026",
     url: "#",
     icon: "✦",
-  },
-  {
-    label: "Print Shop",
-    sub: "Signed limited-edition prints",
-    url: "#",
-    icon: "🛒",
-  },
-  {
-    label: "Commission Inquiries",
-    sub: "Open for new projects",
-    url: "#",
-    icon: "✉",
   },
   {
     label: "Behance",
     sub: "Case studies & process",
     url: "#",
     icon: "🎨",
+  },
+  // {
+  //   label: "Print Shop",
+  //   sub: "Signed limited-edition prints",
+  //   url: "#",
+  //   icon: "🛒",
+  // },
+  {
+    label: "Email Contact",
+    sub: "Open for new projects",
+    url: "#",
+    icon: "✉",
   },
   {
     label: "Newsletter",
@@ -246,6 +246,30 @@ const CURSOR_ICONS = {
   move:       "./icons/cursor/move.apng",
 };
 
+// The custom cursor icon and the gooey drag trail are gated separately:
+// - The icon just needs a real mouse — hover:hover + pointer:fine — so it
+//   activates on ANY mouse-driven device, including a narrow/split browser
+//   window, not just wide desktop layouts. It's a plain 1:1 position swap,
+//   not itself a motion effect, so it also ignores prefers-reduced-motion.
+// - The trail (three blobs lagging behind the pointer via lerp, melted
+//   together with an SVG goo filter) is the actual decorative flourish
+//   meant for a spacious desktop layout, so it additionally requires the
+//   821px width and still respects prefers-reduced-motion.
+// Both stay off on touch devices with no mouse at all — that's what was
+// actually causing the throttling, not the icon itself.
+function hasMouse() {
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+}
+function isWideDesktop() {
+  return window.matchMedia("(min-width: 821px)").matches;
+}
+function shouldEnableCursorIcon() {
+  return hasMouse();
+}
+function shouldEnableCursorTrail() {
+  return hasMouse() && isWideDesktop() && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 function initCustomCursor() {
   const cursorImg = document.createElement("img");
   cursorImg.id = "customCursor";
@@ -327,7 +351,54 @@ function initGooCursor() {
   }
   raf();
 }
- 
+
+// The icon and the trail are only ever started once each (their listeners
+// are harmless while hidden), but we still flip the body classes live so
+// the CSS tracks the current viewport/preference instead of only the state
+// at page load — e.g. resizing a desktop window below 821px, or toggling
+// "reduce motion" in OS settings without reloading the page.
+let cursorIconStarted = false;
+let cursorTrailStarted = false;
+function applyCursorMode() {
+  const iconEnabled = shouldEnableCursorIcon();
+  const trailEnabled = shouldEnableCursorTrail();
+
+  document.body.classList.toggle("custom-cursor-enabled", iconEnabled);
+  document.body.classList.toggle("cursor-trail-enabled", trailEnabled);
+
+  if (iconEnabled && !cursorIconStarted) {
+    cursorIconStarted = true;
+    initCustomCursor();
+  }
+  if (trailEnabled && !cursorTrailStarted) {
+    cursorTrailStarted = true;
+    initGooCursor();
+  }
+}
+
+// ---- 3D card release timer -----------------------------------------
+function handleCardVisibility() {
+  const cardStage = document.getElementById("cardStage");
+  if (!cardStage) return;
+
+  // 5 September 2026, 4:00 PM IST
+  const releaseTime = new Date("2026-09-05T16:00:00+05:30");
+
+  function updateVisibility() {
+    const released = new Date() >= releaseTime;
+
+    cardStage.style.visibility = released ? "visible" : "hidden";
+    cardStage.style.pointerEvents = released ? "auto" : "none";
+
+    // Check again in 1 second until the release time
+    if (!released) {
+      setTimeout(updateVisibility, 1000);
+    }
+  }
+
+  updateVisibility();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderProfile();
   renderSocials();
@@ -335,6 +406,18 @@ document.addEventListener("DOMContentLoaded", () => {
   renderLinks();
   attachGemParallax();
   attachCardDrag();
-  initCustomCursor();
-  initGooCursor();
+
+  handleCardVisibility();
+
+  applyCursorMode();
+    applyCursorMode();
+  window
+    .matchMedia("(hover: hover) and (pointer: fine)")
+    .addEventListener("change", applyCursorMode);
+  window
+    .matchMedia("(min-width: 821px)")
+    .addEventListener("change", applyCursorMode);
+  window
+    .matchMedia("(prefers-reduced-motion: reduce)")
+    .addEventListener("change", applyCursorMode);
 });
