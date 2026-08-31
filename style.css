@@ -199,59 +199,31 @@ body {
 }
 
 /* ============================================================
-   GOOEY BACKDROP BLOBS
+   LIQUID-GOOEY AMBIENT BACKGROUND
+   Rendered by liquid-bg.js via the liquid-gooey library. Cheap enough
+   (silhouette-only goo filter, sleeps when idle) to run on every device,
+   so — unlike the old .goo-bg-layer it replaces — it is NOT gated behind
+   a min-width/hover media query.
    ============================================================ */
-.goo-bg-layer {
+.liquid-bg-root {
   position: fixed;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  filter: url(#gooBackdrop);
-  mix-blend-mode: screen;
-  opacity: 0.34;
   overflow: hidden;
 }
 
-.goo-bg-blob {
+.liquid-bg {
   position: absolute;
-  width: clamp(140px, 20vw, 320px);
-  height: clamp(140px, 20vw, 320px);
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: 0.34;
+}
+
+.liquid-bg-blob {
+  position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.02) 70%);
-}
-
-.goo-bg-blob--a {
-  top: 14%;
-  left: 10%;
-  background: radial-gradient(circle, rgba(255, 46, 154, 0.7), rgba(255, 46, 154, 0.05) 70%);
-  animation: goo-bg-drift-a 20s ease-in-out infinite;
-}
-
-.goo-bg-blob--b {
-  top: 54%;
-  left: 58%;
-  background: radial-gradient(circle, rgba(124, 92, 255, 0.68), rgba(124, 92, 255, 0.04) 70%);
-  animation: goo-bg-drift-b 24s ease-in-out infinite;
-}
-
-.goo-bg-blob--c {
-  top: 28%;
-  left: 74%;
-  background: radial-gradient(circle, rgba(47, 230, 214, 0.65), rgba(47, 230, 214, 0.03) 72%);
-  animation: goo-bg-drift-c 22s ease-in-out infinite;
-}
-
-@keyframes goo-bg-drift-a {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(4vw, 8vh) scale(1.15); }
-}
-@keyframes goo-bg-drift-b {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-6vw, -6vh) scale(1.1); }
-}
-@keyframes goo-bg-drift-c {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-4vw, 7vh) scale(1.08); }
+  transform: translate(-50%, -50%);
 }
 
 /* ============================================================

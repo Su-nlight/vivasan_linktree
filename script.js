@@ -246,6 +246,21 @@ const CURSOR_ICONS = {
   move:       "./icons/cursor/move.apng",
 };
 
+// The enhanced cursor (custom icon-follow + gooey drag trail) is a pure
+// desktop flourish. It's expensive to keep running (per-pointermove DOM
+// writes, an SVG goo filter, a chained rAF loop for the trail blobs) and
+// was one of the main causes of the throttling on mobile, so it must only
+// ever be initialized on devices that are actually mouse-driven, wide
+// enough for it to read as intentional, and not asking for reduced motion.
+// Defined at module scope (not nested in initCustomCursor) so it can be
+// checked before we decide to initialize anything at all.
+function shouldEnableEnhancedCursor() {
+  return (
+    window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 821px)").matches &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
 function initCustomCursor() {
   const cursorImg = document.createElement("img");
   cursorImg.id = "customCursor";
@@ -332,6 +347,22 @@ function initGooCursor() {
   raf();
 }
  
+// Both the custom cursor and the goo cursor trail are only ever started
+// once (their listeners are harmless while hidden), but we still flip the
+// body class live so the CSS (`cursor: none`, `.goo-cursor-layer` display)
+// tracks the current viewport instead of only the state at page load —
+// e.g. rotating a tablet or resizing a desktop window below 821px.
+let enhancedCursorStarted = false;
+function applyCursorMode() {
+  const enable = shouldEnableEnhancedCursor();
+  document.body.classList.toggle("custom-cursor-enabled", enable);
+  if (enable && !enhancedCursorStarted) {
+    enhancedCursorStarted = true;
+    initCustomCursor();
+    initGooCursor();
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderProfile();
   renderSocials();
@@ -340,11 +371,11 @@ document.addEventListener("DOMContentLoaded", () => {
   attachGemParallax();
   attachCardDrag();
 
-  if (shouldEnableEnhancedCursor()) {
-    document.body.classList.add("custom-cursor-enabled");
-    initCustomCursor();
-    initGooCursor();
-  } else {
-    document.body.classList.remove("custom-cursor-enabled");
-  }
+  applyCursorMode();
+  window
+    .matchMedia("(hover: hover) and (pointer: fine) and (min-width: 821px)")
+    .addEventListener("change", applyCursorMode);
+  window
+    .matchMedia("(prefers-reduced-motion: reduce)")
+    .addEventListener("change", applyCursorMode);
 });

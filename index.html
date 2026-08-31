@@ -24,6 +24,10 @@
   </div>
   <div class="grain" aria-hidden="true"></div>
 
+  <!-- Only the cursor-trail filter lives here now — desktop-only, see
+       .goo-cursor-layer. The old always-on background blob filter
+       (#gooBackdrop) has been replaced by the liquid-gooey powered
+       #liquidBgRoot below, which is cheap enough to run on mobile too. -->
   <svg style="position:absolute; width:0; height:0" aria-hidden="true">
     <defs>
       <filter id="goo">
@@ -41,11 +45,10 @@
     </defs>
   </svg>
 
-  <div class="goo-bg-layer" aria-hidden="true">
-    <span class="goo-bg-blob goo-bg-blob--a"></span>
-    <span class="goo-bg-blob goo-bg-blob--b"></span>
-    <span class="goo-bg-blob goo-bg-blob--c"></span>
-  </div>
+  <!-- Ambient background blobs, powered by the liquid-gooey library
+       (see liquid-bg.js). Runs on every device — it's the lightweight
+       replacement for the old always-on SVG-filter background layer. -->
+  <div class="liquid-bg-root" id="liquidBgRoot" aria-hidden="true"></div>
 
   <div class="goo-cursor-layer" id="gooLayer" aria-hidden="true">
     <span class="goo-blob" id="blobMain"></span>
@@ -107,5 +110,21 @@
   </main>
 
 <script src="script.js"></script>
+
+<!-- React is only pulled in for the liquid-gooey background element.
+     liquid-gooey itself is vendored locally (vendor/liquid-gooey) — built
+     from https://github.com/Jakubantalik/Libraries/tree/main/packages/liquid-gooey
+     — so it doesn't depend on a CDN transpiling the source at runtime. -->
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+    "liquid-gooey": "./vendor/liquid-gooey/index.js"
+  }
+}
+</script>
+<script type="module" src="liquid-bg.js"></script>
 </body>
 </html>
