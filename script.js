@@ -6,12 +6,12 @@
 
 // ---- Your profile ------------------------------------------------
 const PROFILE = {
-  name: "Vivacious San",
-  tagline: "Architecture Student · Design Enthusiast",
+  name: "Sanjana Kumari",
+  tagline: "Architecture Student · Design Enthusiast · Creative Thinker",
   // Leave avatarUrl empty to show initials instead of a photo.
   // To use your own photo, put the file next to this one and set
   // avatarUrl: "me.jpg"
-  avatarUrl: "./image/avatar.png",
+  avatarUrl: "/image/avatar.jpeg",
   initials: "VS",
 };
 
@@ -29,27 +29,27 @@ const SOCIALS = [
 const LINKS = [
   {
     label: "Portfolio",
-    sub: "Selected work, 2023–2026",
+    sub: "Selected work, 2023 - 2026",
     url: "#",
     icon: "✦",
-  },
-  {
-    label: "Print Shop",
-    sub: "Signed limited-edition prints",
-    url: "#",
-    icon: "🛒",
-  },
-  {
-    label: "Commission Inquiries",
-    sub: "Open for new projects",
-    url: "#",
-    icon: "✉",
   },
   {
     label: "Behance",
     sub: "Case studies & process",
     url: "#",
     icon: "🎨",
+  },
+  // {
+  //   label: "Print Shop",
+  //   sub: "Signed limited-edition prints",
+  //   url: "#",
+  //   icon: "🛒",
+  // },
+  {
+    label: "Email Contact",
+    sub: "Open for new projects",
+    url: "#",
+    icon: "✉",
   },
   {
     label: "Newsletter",
@@ -246,19 +246,28 @@ const CURSOR_ICONS = {
   move:       "./icons/cursor/move.apng",
 };
 
-// The enhanced cursor (custom icon-follow + gooey drag trail) is a pure
-// desktop flourish. It's expensive to keep running (per-pointermove DOM
-// writes, an SVG goo filter, a chained rAF loop for the trail blobs) and
-// was one of the main causes of the throttling on mobile, so it must only
-// ever be initialized on devices that are actually mouse-driven, wide
-// enough for it to read as intentional, and not asking for reduced motion.
-// Defined at module scope (not nested in initCustomCursor) so it can be
-// checked before we decide to initialize anything at all.
-function shouldEnableEnhancedCursor() {
-  return (
-    window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 821px)").matches &&
-    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
+// The custom cursor icon and the gooey drag trail are gated separately:
+// - The icon just needs a real mouse — hover:hover + pointer:fine — so it
+//   activates on ANY mouse-driven device, including a narrow/split browser
+//   window, not just wide desktop layouts. It's a plain 1:1 position swap,
+//   not itself a motion effect, so it also ignores prefers-reduced-motion.
+// - The trail (three blobs lagging behind the pointer via lerp, melted
+//   together with an SVG goo filter) is the actual decorative flourish
+//   meant for a spacious desktop layout, so it additionally requires the
+//   821px width and still respects prefers-reduced-motion.
+// Both stay off on touch devices with no mouse at all — that's what was
+// actually causing the throttling, not the icon itself.
+function hasMouse() {
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+}
+function isWideDesktop() {
+  return window.matchMedia("(min-width: 821px)").matches;
+}
+function shouldEnableCursorIcon() {
+  return hasMouse();
+}
+function shouldEnableCursorTrail() {
+  return hasMouse() && isWideDesktop() && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 function initCustomCursor() {
@@ -287,10 +296,6 @@ function initCustomCursor() {
     if (target.closest("a, span, button, [role='button'], input[type='submit']")) return "link";
     if (target.closest("p, h1, h2, h3, input[type='text'], textarea")) return "text";
     return "normal";
-  }
-
-  function shouldEnableEnhancedCursor() {
-    return window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 821px)").matches;
   }
 
   function setCursor(key) {
@@ -346,19 +351,27 @@ function initGooCursor() {
   }
   raf();
 }
- 
-// Both the custom cursor and the goo cursor trail are only ever started
-// once (their listeners are harmless while hidden), but we still flip the
-// body class live so the CSS (`cursor: none`, `.goo-cursor-layer` display)
-// tracks the current viewport instead of only the state at page load —
-// e.g. rotating a tablet or resizing a desktop window below 821px.
-let enhancedCursorStarted = false;
+
+// The icon and the trail are only ever started once each (their listeners
+// are harmless while hidden), but we still flip the body classes live so
+// the CSS tracks the current viewport/preference instead of only the state
+// at page load — e.g. resizing a desktop window below 821px, or toggling
+// "reduce motion" in OS settings without reloading the page.
+let cursorIconStarted = false;
+let cursorTrailStarted = false;
 function applyCursorMode() {
-  const enable = shouldEnableEnhancedCursor();
-  document.body.classList.toggle("custom-cursor-enabled", enable);
-  if (enable && !enhancedCursorStarted) {
-    enhancedCursorStarted = true;
+  const iconEnabled = shouldEnableCursorIcon();
+  const trailEnabled = shouldEnableCursorTrail();
+
+  document.body.classList.toggle("custom-cursor-enabled", iconEnabled);
+  document.body.classList.toggle("cursor-trail-enabled", trailEnabled);
+
+  if (iconEnabled && !cursorIconStarted) {
+    cursorIconStarted = true;
     initCustomCursor();
+  }
+  if (trailEnabled && !cursorTrailStarted) {
+    cursorTrailStarted = true;
     initGooCursor();
   }
 }
@@ -372,8 +385,12 @@ document.addEventListener("DOMContentLoaded", () => {
   attachCardDrag();
 
   applyCursorMode();
+    applyCursorMode();
   window
-    .matchMedia("(hover: hover) and (pointer: fine) and (min-width: 821px)")
+    .matchMedia("(hover: hover) and (pointer: fine)")
+    .addEventListener("change", applyCursorMode);
+  window
+    .matchMedia("(min-width: 821px)")
     .addEventListener("change", applyCursorMode);
   window
     .matchMedia("(prefers-reduced-motion: reduce)")

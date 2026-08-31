@@ -752,7 +752,7 @@ a:focus-visible,
   cursor: none !important;
 }
 
-.custom-cursor-enabled .goo-cursor-layer {
+.cursor-trail-enabled .goo-cursor-layer {
   display: block;
 }
 
