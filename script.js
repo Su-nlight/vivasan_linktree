@@ -376,6 +376,29 @@ function applyCursorMode() {
   }
 }
 
+// ---- 3D card release timer -----------------------------------------
+function handleCardVisibility() {
+  const cardStage = document.getElementById("cardStage");
+  if (!cardStage) return;
+
+  // 5 September 2026, 4:00 PM IST
+  const releaseTime = new Date("2026-09-05T16:00:00+05:30");
+
+  function updateVisibility() {
+    const released = new Date() >= releaseTime;
+
+    cardStage.style.visibility = released ? "visible" : "hidden";
+    cardStage.style.pointerEvents = released ? "auto" : "none";
+
+    // Check again in 1 second until the release time
+    if (!released) {
+      setTimeout(updateVisibility, 1000);
+    }
+  }
+
+  updateVisibility();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderProfile();
   renderSocials();
@@ -383,6 +406,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderLinks();
   attachGemParallax();
   attachCardDrag();
+
+  handleCardVisibility();
 
   applyCursorMode();
     applyCursorMode();
