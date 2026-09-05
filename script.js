@@ -18,8 +18,8 @@ const PROFILE = {
 // ---- Social icon row (small circular pills) -----------------------
 // "icon" accepts any emoji or short glyph. Order = display order.
 const SOCIALS = [
-  { label: "Instagram", url: "https://www.instagram.com/vivacious_san/", icon: "https://img.icons8.com/fluency/64/instagram-new.png" },
-  { label: "LinkedIn", url: "https://www.linkedin.com/in/sanjana-kumari-54a2b5306/", icon: "https://img.icons8.com/color/64/linkedin.png" },
+  { label: "Instagram", url: "https://www.instagram.com/vivacious_san/", icon: "https://img.icons8.com/fluency/48/instagram-new.png" },
+  { label: "LinkedIn", url: "https://www.linkedin.com/in/sanjana-kumari-54a2b5306/", icon: "https://img.icons8.com/color/48/linkedin.png" },
   // { label: "Dribbble", url: "#", icon: "🏀" },
   // { label: "YouTube", url: "", icon: "▶" },
 ];
@@ -396,7 +396,10 @@ function handleCardVisibility() {
     }
   }
 
-  updateVisibility();
+  // updateVisibility();
+  cardStage.style.visibility =  "hidden";
+  cardStage.style.pointerEvents =  "none";
+
 }
 
 document.addEventListener("DOMContentLoaded", () => {
