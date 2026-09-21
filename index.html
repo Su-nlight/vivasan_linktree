@@ -6,6 +6,14 @@
 <title>Vivacious_San — Links</title>
 <meta name="description" content="Portfolio, prints, and social links." />
 
+<!-- Theme: follows the OS light/dark setting until the visitor uses the
+     switch. theme.js is deliberately a plain blocking script — it sets
+     data-theme on <html> before the first paint, so there's no flash of the
+     wrong theme. -->
+<meta name="color-scheme" content="dark light" />
+<meta name="theme-color" content="#0a0714" />
+<script src="theme.js"></script>
+
 <!-- Display + body + utility type pairing -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +31,20 @@
 <link rel="apple-touch-icon" href="/icons/favicon.png">
 </head>
 <body>
+
+    <!-- Light / dark switch (behaviour lives in theme.js) -->
+  <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="true" aria-label="Dark mode" title="Switch light / dark theme">
+    <span class="theme-toggle__glyph theme-toggle__glyph--sun" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
+    </span>
+    <span class="theme-toggle__glyph theme-toggle__glyph--moon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 0 1 9.8 3.5a8.6 8.6 0 1 0 10.7 10.7z"/></svg>
+    </span>
+    <span class="theme-toggle__knob" aria-hidden="true">
+      <svg class="knob-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.3M12 19.2v2.3M2.5 12h2.3M19.2 12h2.3M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
+      <svg class="knob-moon" viewBox="0 0 24 24"><path d="M20.5 14.2A8.6 8.6 0 0 1 9.8 3.5a8.6 8.6 0 1 0 10.7 10.7z"/></svg>
+    </span>
+  </button>
 
   <!-- Animated aurora backdrop, purely decorative -->
   <div class="aurora" aria-hidden="true">
@@ -79,7 +101,7 @@
       </div>
 
       <div class="hero-right">
-        <section class="card-stage" id="cardStage">
+        <!-- <section class="card-stage" id="cardStage">
           <div class="card-tilt" id="cardTilt">
             <div class="flip-card" id="flipCard">
               <div class="card-face card-face--front"><img id="cardFrontImg" src="" alt="" draggable="false" /></div>
@@ -91,7 +113,7 @@
             </div>
           </div>
           <p class="drag-hint">Drag to spin · double-click to reset</p>
-        </section>
+        </section> -->
       </div>
     </div>
 
@@ -119,6 +141,7 @@
   </main>
 
 <script src="script.js"></script>
+<script src="robot.js"></script>
 
 <!-- React is only pulled in for the liquid-gooey background element.
      liquid-gooey itself is vendored locally (vendor/liquid-gooey) — built
@@ -128,6 +151,7 @@
 {
   "imports": {
     "react": "https://esm.sh/react@18.3.1",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
     "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
     "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
     "liquid-gooey": "./vendor/liquid-gooey/index.js"
