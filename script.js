@@ -11,7 +11,7 @@ const PROFILE = {
   // Leave avatarUrl empty to show initials instead of a photo.
   // To use your own photo, put the file next to this one and set
   // avatarUrl: "me.jpg"
-  avatarUrl: "/image/avatar.jpeg",
+  avatarUrl: "./image/avatar.jpeg",
   initials: "VS",
 };
 
