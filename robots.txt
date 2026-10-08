@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Sitemap location (update this once you have a custom domain)
+# Sitemap: https://yourdomain.com/sitemap.xml
+
