@@ -1,0 +1,19 @@
+# Security contact for vivasan_linktree
+# See https://securitytxt.org/ and RFC 9116
+
+# [REQUIRES YOUR INPUT] Replace the email address below with your real contact email.
+# Do not use a personal email address you want kept private.
+Contact: mailto:asyncvivasan@gmail.com
+
+# [REQUIRES YOUR INPUT] Set an expiry date approximately 1 year from now.
+Expires: 2027-10-11T00:00:00.000Z
+
+# [OPTIONAL] If you have a PGP key, add it here.
+# Encryption: https://PLACEHOLDER.example/pgp-key.txt
+
+# [OPTIONAL] Link to your security policy once you publish it.
+# Policy: https://PLACEHOLDER.example/security-policy
+
+# [OPTIONAL] Languages supported.
+Preferred-Languages: en, hi
+

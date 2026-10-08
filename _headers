@@ -1,0 +1,38 @@
+/*
+  # Security headers applied to every response.
+  #
+  # This file is read by Netlify and Cloudflare Pages automatically.
+  # For GitHub Pages (which does not support custom headers), the
+  # <meta http-equiv="Content-Security-Policy"> tag in index.html
+  # provides partial equivalent coverage for CSP only.
+  #
+  # For other platforms see docs/production-deployment.md.
+
+  # Prevent clickjacking — this page must never be embedded in an iframe.
+  X-Frame-Options: DENY
+
+  # Stop browsers from sniffing MIME types for scripts/styles (type confusion).
+  X-Content-Type-Options: nosniff
+
+  # Never send the full Referer URL to external sites when a visitor clicks
+  # an external link. Keeps the page URL out of third-party server logs.
+  Referrer-Policy: no-referrer
+
+  # Disable browser features this page doesn't use, reducing the attack
+  # surface for any future XSS payload.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=()
+
+  # Content-Security-Policy — mirrors the <meta> tag in index.html.
+  # Server-delivered headers take precedence over meta tags and also
+  # cover HTTP responses (redirects, 404 pages, etc.).
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://esm.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://img.icons8.com; connect-src 'self' https://esm.sh; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';
+
+  # Cross-Origin policies: tighten to same-origin to prevent drive-by
+  # cross-origin reads (Spectre mitigations and CORP).
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+
+  # Cache-Control: this page has no auth, but we still want fresh content.
+  # max-age=300 (5 min) with must-revalidate is a reasonable balance.
+  Cache-Control: public, max-age=300, must-revalidate
+
