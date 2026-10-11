@@ -53,10 +53,6 @@
     !eyeR ||
     !ornament
   ) {
-    console.warn(
-      "[Hero Character] Required SVG elements were not found."
-    );
-
     return;
   }
 
