@@ -6,6 +6,51 @@
 <title>Vivacious_San — Links</title>
 <meta name="description" content="Portfolio, prints, and social links." />
 
+<!-- Referrer policy: send no referrer when navigating to external sites,
+     so external destinations cannot see which URL on this page the visitor
+     clicked from. -->
+<meta name="referrer" content="no-referrer" />
+
+<!-- Content-Security-Policy (meta-tag delivery — server headers take
+     precedence when the hosting platform supports them; see _headers).
+
+     Rationale for each directive:
+     • default-src 'self'     — fall-through default: nothing not listed.
+     • script-src 'self' https://esm.sh  — esm.sh serves React for liquid-bg.js.
+                                           No 'unsafe-inline' or 'unsafe-eval'.
+     • style-src  'self' 'unsafe-inline' https://fonts.googleapis.com
+                           — Google Fonts stylesheet link tag needs fonts.googleapis.com.
+                             'unsafe-inline' is needed because:
+                             (a) the custom cursor JS sets element.style directly,
+                             (b) the liquid-gooey React component sets inline style props.
+                             Removing it would break the cursor and the ambient background.
+                             Mitigation: script-src has no 'unsafe-inline', which is
+                             the primary XSS vector.
+     • font-src   'self' https://fonts.gstatic.com  — actual font files.
+     • img-src    'self' data: https://img.icons8.com
+                           — icons8 serves the Instagram/LinkedIn icons.
+                             data: is needed for the APNG favicon inline representation
+                             in some browsers; it is NOT allowed in script-src.
+     • connect-src 'self' https://esm.sh
+                           — importmap fetch for React modules.
+     • object-src 'none'  — disables Flash/Java/PDF plugin embedding.
+     • frame-ancestors 'none'  — prevents clickjacking (equivalent to X-Frame-Options DENY).
+     • base-uri   'self'  — prevents <base href> injection attacks.
+     • form-action 'self' — this page has no forms, but belt-and-braces.
+-->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://esm.sh;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  img-src 'self' data: https://img.icons8.com;
+  connect-src 'self' https://esm.sh;
+  object-src 'none';
+  frame-ancestors 'none';
+  base-uri 'self';
+  form-action 'self';
+" />
+
 <!-- Theme: follows the OS light/dark setting until the visitor uses the
      switch. theme.js is deliberately a plain blocking script — it sets
      data-theme on <html> before the first paint, so there's no flash of the
@@ -31,6 +76,12 @@
 <link rel="apple-touch-icon" href="/icons/favicon.png">
 </head>
 <body>
+
+  <!-- Skip navigation — first focusable element on the page.
+       Appears on :focus-visible so keyboard users can jump straight
+       to the main content without tabbing through the decorative chrome.
+       WCAG 2.2 AA criterion 2.4.1 (Bypass Blocks). -->
+  <a class="skip-link" href="#main">Skip to main content</a>
 
     <!-- Light / dark switch (behaviour lives in theme.js) -->
   <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="true" aria-label="Dark mode" title="Switch light / dark theme">
@@ -87,7 +138,7 @@
     <span class="goo-blob goo-blob--trail2" id="blobTrail2"></span>
   </div>
 
-  <main class="page">
+  <main class="page" id="main">
 
     <div class="hero-row">
       <div class="hero-left">

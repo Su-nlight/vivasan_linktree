@@ -4,6 +4,41 @@
    No HTML editing required.
    ================================================================ */
 
+/* ================================================================
+   SECURITY HELPERS — do not edit these.
+
+   escHtml()  — escapes the five HTML special characters so that
+                 any string can be safely placed inside innerHTML
+                 without enabling XSS.  Always use this for any
+                 user-controlled or configurable value injected
+                 into a template literal that goes to innerHTML.
+
+   safeUrl()  — returns the URL unchanged when it uses a safe
+                 scheme (https, http, mailto, tel, or a relative
+                 path), or returns '#' for anything else.  This
+                 prevents javascript:, data:, vbscript:, and
+                 file: URLs from being injected into href
+                 attributes.
+   ================================================================ */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+const SAFE_URL_RE = /^(https?:\/\/|mailto:|tel:|\/|\.\/|\.\.\/)/i;
+function safeUrl(url) {
+  if (!url) return "#";
+  const trimmed = url.trim();
+  if (trimmed === "#") return "#";
+  if (SAFE_URL_RE.test(trimmed)) return trimmed;
+  // Block javascript:, data:, vbscript:, file: and anything else unknown
+  return "#";
+}
+
 // ---- Your profile ------------------------------------------------
 const PROFILE = {
   name: "Sanjana Kumari",
@@ -65,55 +100,74 @@ const LINKS = [
  
 function renderProfile() {
   const el = document.getElementById("profile");
-  const avatarInner = PROFILE.avatarUrl
-    ? `<img src="${PROFILE.avatarUrl}" alt="${PROFILE.name}" />`
-    : PROFILE.initials;
- 
+  // escHtml() prevents XSS if these values are ever changed to include
+  // HTML special characters (e.g. a name containing "<script>").
+  const safeName     = escHtml(PROFILE.name     || "");
+  const safeTagline  = escHtml(PROFILE.tagline  || "");
+  const safeInitials = escHtml(PROFILE.initials || "");
+  const avatarSrc    = safeUrl(PROFILE.avatarUrl || "");
+
+  const avatarInner = avatarSrc && avatarSrc !== "#"
+    ? `<img src="${escHtml(avatarSrc)}" alt="${safeName}" />`
+    : safeInitials;
+
   el.innerHTML = `
     <div class="avatar-ring">
       <div class="avatar">${avatarInner}</div>
     </div>
-    <h1 class="name">${PROFILE.name}</h1>
-    <p class="tagline">${PROFILE.tagline}</p>
+    <h1 class="name">${safeName}</h1>
+    <p class="tagline">${safeTagline}</p>
   `;
 }
- 
+
 // If "icon" looks like a file path (svg/png/jpg/webp), render it as an
 // <img>. Otherwise treat it as an emoji/glyph and render as plain text.
 function isImagePath(icon) {
-  return /\.(svg|png|jpe?g|webp)$/i.test(icon);
+  return /\.(svg|png|jpe?g|webp)$/i.test(String(icon));
 }
- 
+
 function renderIcon(icon, label) {
-  return isImagePath(icon)
-    ? `<img src="${icon}" alt="" />`
-    : `<span aria-hidden="true">${icon}</span>`;
+  if (isImagePath(icon)) {
+    const src = safeUrl(icon);
+    // Only render as <img> if safeUrl approved it (blocks data: / javascript: URIs)
+    if (src && src !== "#") {
+      return `<img src="${escHtml(src)}" alt="" />`;
+    }
+    return "";
+  }
+  // Emoji/glyph — escHtml removes any accidentally injected markup
+  return `<span aria-hidden="true">${escHtml(icon)}</span>`;
 }
- 
+
 function renderSocials() {
   const el = document.getElementById("socials");
-  el.innerHTML = SOCIALS.map(
-    (s) => `
-    <a class="social-pill" href="${s.url}" target="_blank" rel="noopener noreferrer" aria-label="${s.label}">
+  el.innerHTML = SOCIALS.map((s) => {
+    const href  = escHtml(safeUrl(s.url));
+    const label = escHtml(s.label || "");
+    return `
+    <a class="social-pill" href="${href}" target="_blank" rel="noopener noreferrer" aria-label="${label}">
       ${renderIcon(s.icon, s.label)}
-    </a>`
-  ).join("");
+    </a>`;
+  }).join("");
 }
- 
+
 function renderLinks() {
   const el = document.getElementById("links");
-  el.innerHTML = LINKS.map(
-    (l) => `
-    <a class="link-card" href="${l.url}" target="_blank" rel="noopener noreferrer">
+  el.innerHTML = LINKS.map((l) => {
+    const href  = escHtml(safeUrl(l.url));
+    const label = escHtml(l.label || "");
+    const sub   = l.sub ? `<span class="link-sub">${escHtml(l.sub)}</span>` : "";
+    return `
+    <a class="link-card" href="${href}" target="_blank" rel="noopener noreferrer">
       <span class="link-icon">${renderIcon(l.icon || "→", l.label)}</span>
       <span class="link-text">
-        <span class="link-label">${l.label}</span>
-        ${l.sub ? `<span class="link-sub">${l.sub}</span>` : ""}
+        <span class="link-label">${label}</span>
+        ${sub}
       </span>
       <span class="link-arrow" aria-hidden="true">→</span>
-    </a>`
-  ).join("");
- 
+    </a>`;
+  }).join("");
+
   attachLightTracking();
 }
  
@@ -413,7 +467,6 @@ document.addEventListener("DOMContentLoaded", () => {
   handleCardVisibility();
 
   applyCursorMode();
-    applyCursorMode();
   window
     .matchMedia("(hover: hover) and (pointer: fine)")
     .addEventListener("change", applyCursorMode);
@@ -423,4 +476,4 @@ document.addEventListener("DOMContentLoaded", () => {
   window
     .matchMedia("(prefers-reduced-motion: reduce)")
     .addEventListener("change", applyCursorMode);
-});
+});
